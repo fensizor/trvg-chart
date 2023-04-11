@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trvg-chart.fullname" . }}-golang-app
+  labels:
+  {{- include "trvg-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.golangApp.replicas }}
+  selector:
+    matchLabels:
+      app: golang-app
+    {{- include "trvg-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: golang-app
+      {{- include "trvg-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.golangApp.golangContainer.image.repository }}:{{ .Values.golangApp.golangContainer.image.tag
+          | default .Chart.AppVersion }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        name: golang-container
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trvg-chart.fullname" . }}-java-app
+  labels:
+  {{- include "trvg-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.javaApp.replicas }}
+  selector:
+    matchLabels:
+      app: java-app
+    {{- include "trvg-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: java-app
+      {{- include "trvg-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.javaApp.javaContainer.image.repository }}:{{ .Values.javaApp.javaContainer.image.tag
+          | default .Chart.AppVersion }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        name: java-container
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources: {}

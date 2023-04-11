@@ -1,0 +1,27 @@
+golangApp:
+  golangContainer:
+    image:
+      repository: fensizor/golang-app
+      tag: latest
+  replicas: 3
+golangService:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  type: ClusterIP
+javaApp:
+  javaContainer:
+    image:
+      repository: fensizor/java-app
+      tag: latest
+  replicas: 2
+javaService:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  type: ClusterIP
+kubernetesClusterDomain: cluster.local

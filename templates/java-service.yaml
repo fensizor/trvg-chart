@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trvg-chart.fullname" . }}-java-service
+  labels:
+  {{- include "trvg-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.javaService.type }}
+  selector:
+    app: java-app
+  {{- include "trvg-chart.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.javaService.ports | toYaml | nindent 2 -}}

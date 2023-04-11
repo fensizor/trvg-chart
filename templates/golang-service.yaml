@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trvg-chart.fullname" . }}-golang-service
+  labels:
+  {{- include "trvg-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.golangService.type }}
+  selector:
+    app: golang-app
+  {{- include "trvg-chart.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.golangService.ports | toYaml | nindent 2 -}}

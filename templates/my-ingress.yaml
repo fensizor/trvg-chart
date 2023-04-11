@@ -1,0 +1,83 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "trvg-chart.fullname" . }}-my-ingress
+  labels:
+  {{- include "trvg-chart.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-by-header: x-trv-heritage
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - host: trvg.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: '{{ include "trvg-chart.fullname" . }}-golang-service'
+            port:
+              name: http
+        annotations: 
+          nginx.ingress.kubernetes.io/canary-weight: "70"
+        path: /hotels
+        pathType: Prefix
+      - backend:
+          service:
+            name: '{{ include "trvg-chart.fullname" . }}-golang-service'
+            port:
+              name: http
+        annotations: 
+          nginx.ingress.kubernetes.io/canary-weight: "70"
+        path: /health
+        pathType: Prefix
+      - backend:
+          service:
+            name: '{{ include "trvg-chart.fullname" . }}-golang-service'
+            port:
+              name: http
+        path: /ready
+        pathType: Prefix
+      - backend:
+          service:
+            name: '{{ include "trvg-chart.fullname" . }}-golang-service'
+            port:
+              name: http
+        annotations: 
+          nginx.ingress.kubernetes.io/canary-weight: "70"
+        path: /metrics
+        pathType: Prefix
+      - backend:
+          service:
+            name: '{{ include "trvg-chart.fullname" . }}-java-service'
+            port:
+              name: http
+        path: /hotels
+        pathType: Prefix
+      - backend:
+          service:
+            name: '{{ include "trvg-chart.fullname" . }}-java-service'
+            port:
+              name: http
+        annotations: 
+          nginx.ingress.kubernetes.io/canary-weight: "30"
+        path: /health
+        pathType: Prefix
+      - backend:
+          service:
+            name: '{{ include "trvg-chart.fullname" . }}-java-service'
+            port:
+              name: http
+        annotations: 
+          nginx.ingress.kubernetes.io/canary-weight: "30"
+        path: /ready
+        pathType: Prefix
+      - backend:
+          service:
+            name: '{{ include "trvg-chart.fullname" . }}-java-service'
+            port:
+              name: http
+        annotations: 
+          nginx.ingress.kubernetes.io/canary-weight: "30"
+        path: /metrics
+        pathType: Prefix
